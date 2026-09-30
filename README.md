@@ -37,9 +37,11 @@ npm test
 
 The suite checks table values against the CSV, local resource links, clipboard copying, JavaScript-disabled readability, figure switching, first-viewport playback, step and timeline controls, hover/focus/touch inspection, light artwork under a dark OS preference, reduced motion, page overflow, and automated WCAG A/AA accessibility at 320, 390, 768, and 1440 pixels. Screenshots are written to the ignored `test-results/` directory.
 
-## Publish after review
+## Deployment
 
-This is a GitHub Pages-ready static site (`.nojekyll` included). The existing repository can serve `main` / root. No deployment, push, or repository-settings change has been performed.
+`.github/workflows/pages.yml` builds the static site on pull requests and deploys it to GitHub Pages when changes reach `main`. A manual run on `main` can also redeploy the site. Set **Settings → Pages → Source** to **GitHub Actions**. Private repositories require a GitHub plan that supports Pages.
+
+The deployment artifact contains only the HTML, CSS, JavaScript, paper PDF, assets, figure data, robots.txt, and sitemap.xml. Repository maintenance files (`README.md`, `docs/`, tests, scripts, and package manifests) are excluded. No separate deployment repository or `gh-pages` branch is needed.
 
 ## Search and sharing metadata
 
