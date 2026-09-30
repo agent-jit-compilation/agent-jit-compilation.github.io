@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling | ICML 2026</title>
+  <meta name="description"
+    content="Agent JIT Compilation reduces web agent latency through checked code plans and task-specific scheduling. ICML 2026 research on efficient computer-use agents.">
+  <link rel="canonical" href="https://agent-jit-compilation.github.io/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling">
+  <meta property="og:description"
+    content="Agent JIT Compilation compiles browser tasks into checked code plans. JIT-Planner achieves a 10.4× speedup over Browser-Use; in a separate evaluation, JIT-Scheduler achieves a 2.4× speedup over OpenAI CUA.">
+  <meta property="og:url" content="https://agent-jit-compilation.github.io/">
+  <meta property="og:site_name" content="Agent JIT Compilation">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://agent-jit-compilation.github.io/assets/figures/architecture.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2000">
+  <meta property="og:image:height" content="1063">
+  <meta property="og:image:alt"
+    content="Agent JIT Compilation architecture: JIT-Planner checks and ranks code plans; JIT-Scheduler selects serial, parallel, or hedged execution.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling">
+  <meta name="twitter:description"
+    content="Agent JIT Compilation compiles browser tasks into checked code plans. JIT-Planner achieves a 10.4× speedup over Browser-Use; in a separate evaluation, JIT-Scheduler achieves a 2.4× speedup over OpenAI CUA.">
+  <meta name="twitter:image" content="https://agent-jit-compilation.github.io/assets/figures/architecture.png">
+  <meta name="twitter:image:alt"
+    content="Agent JIT Compilation architecture: JIT-Planner checks and ranks code plans; JIT-Scheduler selects serial, parallel, or hedged execution.">
+  <meta name="citation_title" content="Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling">
+  <meta name="citation_author" content="Caleb Winston">
+  <meta name="citation_author" content="Ron Yifeng Wang">
+  <meta name="citation_author" content="Azalia Mirhoseini">
+  <meta name="citation_author" content="Christos Kozyrakis">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="Proceedings of the 43rd International Conference on Machine Learning">
+  <meta name="citation_volume" content="306">
+  <meta name="citation_firstpage" content="135161">
+  <meta name="citation_lastpage" content="135186">
+  <meta name="citation_publisher" content="PMLR">
+  <meta name="citation_abstract_html_url" content="https://agent-jit-compilation.github.io/">
+  <meta name="citation_pdf_url" content="https://agent-jit-compilation.github.io/paper.pdf">
+  <link rel="alternate" type="application/pdf" title="Paper PDF"
+    href="https://agent-jit-compilation.github.io/paper.pdf">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "@id": "https://agent-jit-compilation.github.io/#paper",
+  "name": "Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling",
+  "headline": "Agent JIT Compilation for Latency-Optimizing Web Agent Planning and Scheduling",
+  "url": "https://agent-jit-compilation.github.io/",
+  "mainEntityOfPage": "https://agent-jit-compilation.github.io/",
+  "description": "Agent JIT Compilation reduces web agent latency through checked code plans and task-specific scheduling. ICML 2026 research on efficient computer-use agents.",
+  "abstract": "Computer-use agents automate tasks specified with natural language, such as “order the cheapest item from Taco Bell,” by generating sequences of tool calls in a browser. Current implementations follow a sequential observe–reason–act loop, where each iteration requires an LLM call. This leads to high latency and frequent errors from incorrect tool use. We present Agent JIT Compilation , a system that compiles task descriptions directly into executable code that may include LLM calls, tool calls, and parallelization. Our approach comprises a cost-optimizing planner that generates, validates, and ranks candidate programs; a cost-aware scheduler that chooses between serial, parallel, and hedged execution; and a tool protocol that specifies preconditions and postconditions to check tool use. Across five applications, JIT-Planner achieves a 10.4× speedup and a 28 percentage-point accuracy improvement over Browser-Use. In a separate evaluation, JIT-Scheduler achieves a 2.4× speedup and approximately 9 percentage-point accuracy improvement over OpenAI CUA.",
+  "inLanguage": "en",
+  "datePublished": "2026",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Caleb Winston",
+      "url": "https://calebwin.github.io/",
+      "sameAs": [
+        "https://scholar.google.com/citations?user=JkqpzDoAAAAJ"
+      ]
+    },
+    {
+      "@type": "Person",
+      "name": "Ron Yifeng Wang",
+      "url": "https://ronyw.com/"
+    },
+    {
+      "@type": "Person",
+      "name": "Azalia Mirhoseini",
+      "url": "https://www.azaliamirhoseini.com/",
+      "sameAs": [
+        "https://scholar.google.com/citations?user=I1nZzWsAAAAJ"
+      ]
+    },
+    {
+      "@type": "Person",
+      "name": "Christos Kozyrakis",
+      "url": "https://web.stanford.edu/~kozyraki/"
+    }
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "PMLR",
+    "url": "https://proceedings.mlr.press/"
+  },
+  "isPartOf": {
+    "@type": "PublicationVolume",
+    "volumeNumber": "306",
+    "name": "Proceedings of the 43rd International Conference on Machine Learning",
+    "isPartOf": {
+      "@type": "CreativeWorkSeries",
+      "name": "Proceedings of Machine Learning Research"
+    }
+  },
+  "pageStart": "135161",
+  "pageEnd": "135186",
+  "sameAs": [
+    "https://arxiv.org/abs/2605.21470",
+    "https://proceedings.mlr.press/v306/winston26b.html",
+    "https://icml.cc/virtual/2026/poster/66062"
+  ],
+  "image": "https://agent-jit-compilation.github.io/assets/figures/architecture.png",
+  "encoding": {
+    "@type": "MediaObject",
+    "contentUrl": "https://agent-jit-compilation.github.io/paper.pdf",
+    "encodingFormat": "application/pdf"
+  }
+}
+  </script>
+  <link rel="stylesheet" href="assets/vendor/bulma.min.css">
+  <link rel="stylesheet" href="styles.css?v=5c332431d9ed">
+  <script src="script.js" defer></script>
+  <script src="data/figure-art.js" defer></script>
+  <script src="data/plot-data.js" defer></script>
+  <script src="data/planner-plots.js?v=acd68f867dd0" defer></script>
+  <script src="planner-charts.js?v=dde9da7abba8" defer></script>
+  <script src="interactions.js?v=223dc334f499" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#abstract">Skip to content</a>
+  <main>
+    <!-- Publication header adapted from the Nerfies academic project-page template. -->
+    <section class="hero" id="top">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-1 publication-title">Agent JIT Compilation<br><span>for Latency-Optimizing Web
+                  Agent<br class="title-break"> Planning and Scheduling</span></h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block"><a href="https://calebwin.github.io/">Caleb Winston</a>,</span>
+                <span class="author-block"><a href="https://ronyw.com/">Ron Yifeng Wang</a>,</span>
+                <span class="author-block"><a href="https://www.azaliamirhoseini.com/">Azalia Mirhoseini</a>,</span>
+                <span class="author-block"><a href="https://web.stanford.edu/~kozyraki/">Christos Kozyrakis</a></span>
+              </div>
+              <div class="is-size-5 publication-authors">Stanford University</div>
+              <div class="is-size-5 publication-venue">ICML 2026</div>
+              <div class="publication-links">
+                <span class="link-block"><a href="https://icml.cc/virtual/2026/poster/66062" target="_blank"
+                    class="button is-normal is-rounded is-dark"><span class="icon" aria-hidden="true"><svg
+                        viewBox="0 0 24 24">
+                        <path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zm0 0v5h5M8 12h8M8 16h6" />
+                      </svg></span><span>Paper</span></a></span>
+                <span class="link-block"><a href="https://arxiv.org/abs/2605.21470" target="_blank"
+                    class="button is-normal is-rounded is-dark"><span class="icon arxiv-icon"
+                      aria-hidden="true">𝒳</span><span>arXiv</span></a></span>
+                <span class="link-block"><a href="#citation" class="button is-normal is-rounded is-dark"><span
+                      class="icon" aria-hidden="true">❞</span><span>BibTeX</span></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero teaser" aria-label="System overview">
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+          <figure>
+            <a href="assets/figures/architecture.png" aria-label="View full-size system architecture"><img
+                src="assets/figures/architecture.png" width="2000" height="1063"
+                alt="Agent JIT architecture: the planner generates candidate programs, verifies tool sequences and selects by cost. The scheduler compares serial, parallel and hedged execution using cached latency distributions."></a>
+            <figcaption class="subtitle has-text-centered"><strong>Agent JIT Compilation</strong> compiles
+              natural-language web tasks into executable programs, checks their tool calls, and selects low-cost plans
+              and execution strategies.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="abstract">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3 has-text-centered">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>Computer-use agents automate tasks specified with natural language, such as “order the cheapest item
+                from Taco Bell,” by generating sequences of tool calls in a browser. Current implementations follow a
+                sequential observe–reason–act loop, where each iteration requires an LLM call. This leads to high
+                latency and frequent errors from incorrect tool use.</p>
+              <p>We present <strong>Agent JIT Compilation</strong>, a system that compiles task descriptions directly
+                into executable code that may include LLM calls, tool calls, and parallelization. Our approach comprises
+                a cost-optimizing planner that generates, validates, and ranks candidate programs; a cost-aware
+                scheduler that chooses between serial, parallel, and hedged execution; and a tool protocol that
+                specifies preconditions and postconditions to check tool use. Across five applications, JIT-Planner
+                achieves a <strong>10.4× speedup and a 28 percentage-point accuracy improvement</strong> over
+                Browser-Use. In a separate evaluation, JIT-Scheduler achieves a <strong>2.4× speedup and approximately 9
+                  percentage-point accuracy improvement</strong> over OpenAI CUA.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Motivation</h2>
+
+        <p>
+          Computer-use agents translate natural-language requests into actions in a browser, but completing those
+          requests with low latency and high reliability remains challenging. Below we make three observations that
+          motivate our focus on latency-optimizing planning and scheduling.
+        </p>
+
+        <p>
+          <strong>1. Low-level actions force agents to repeatedly solve routine interactions.</strong>
+          Primitive actions such as clicking coordinates and typing text provide broad coverage of browser states,
+          but completing even familiar interactions may require many model-mediated steps. Prior work on tool
+          discovery and reuse has shown that recurring interaction sequences can instead be exposed as
+          application-level tools such as <code>list_restaurants</code> and <code>add_to_cart</code>.
+          Once these reusable tools are available, the agent can operate over a smaller, higher-level action space,
+          but must still decide how to compose them efficiently.
+        </p>
+
+        <p>
+          <strong>2. Much of execution is deterministic once semantic decisions are made.</strong>
+          Suppose an agent has decided to list menu items and select the least expensive one. The data flow between
+          these operations does not necessarily require another model decision. Nevertheless, a conventional
+          observe&ndash;reason&ndash;act loop invokes the model at every step, adding inference latency and
+          execution-time nondeterminism. Representing execution as code can remove these unnecessary intermediate
+          model calls while retaining inference where semantic judgment is actually required. However, a task may
+          admit many valid programs with different tool sequences, retained LLM calls, and control-flow structures.
+          The challenge is to determine which candidates compose the tools correctly and which valid program is
+          likely to execute most efficiently, without <i>running</i> every alternative.
+        </p>
+
+        <p>
+          <strong>3. No single execution strategy is best across tasks.</strong>
+          Independent subtasks can benefit from parallel execution, while short or tightly dependent tasks may be
+          faster serially. When interaction latency varies substantially across attempts, redundant execution with
+          request hedging can instead reduce tail latency. Which strategy performs best therefore depends on task
+          dependencies, coordination overhead, and the latency and reliability of the underlying interactions.
+          Execution strategy is thus a task-specific scheduling decision rather than a fixed system configuration.
+        </p>
+
+        <p>
+          These observations motivate <strong>Agent JIT Compilation</strong>, which treats a natural-language
+          instruction as input to an optimization process. <strong>JIT-Planner optimizes what program to
+            execute:</strong>
+          it searches over compositions of reusable tools, checks their validity, and selects by estimated cost.
+          The tool protocol supplies preconditions and postconditions for checking composition before execution.
+          <strong>JIT-Scheduler optimizes how to allocate workers:</strong> it selects an execution strategy using
+          learned latency distributions. We evaluate these two optimization problems separately.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="planner">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">JIT-Planner: selecting a valid, low-cost program</h2>
+        <p>The planner translates a task into a program containing tool calls, ordinary computation, and any required
+          LLM inference. Its tool cache contains reusable implementations synthesized offline from successful
+          interaction traces. Multiple workers generate candidate programs in parallel. Once the requested number
+          of valid candidates is available, the planner returns the one with the lowest estimated cost. The planner
+          can also use validation errors to refine unsuccessful candidates; the main evaluation uses one iteration
+          per worker (<i>M</i><sub>max</sub> = 1), with serial retries studied in a separate ablation.</p>
+
+        <h3 class="title is-4">Example: ordering the cheapest item</h3>
+        <p>Consider the task <em>“Order the cheapest item from Taco Bell.”</em> There are several ways to implement it,
+          and a shorter program is not necessarily correct. The example below shows three candidates generated by
+          JIT-Planner.</p>
+        <figure class="paper-figure interactive-figure" id="planning-interactive">
+          <div class="interactive-mount"></div>
+          <a class="static-figure" href="assets/figures/planning-example.png"
+            aria-label="View full-size planning example"><img src="assets/figures/planning-example.png"
+              alt="Three candidate plans for ordering the cheapest item. Plan 1 calls an LLM to select the cheapest item. Plan 2 skips restaurant navigation and violates a precondition. Plan 3 navigates correctly and computes the minimum in code."
+              loading="lazy" width="2000" height="1270"></a>
+          <figcaption><strong>Planning example.</strong> The planner rejects a candidate with an invalid tool sequence
+            and selects the valid candidate with lower estimated cost. Adapted from Figure 3 of the paper.</figcaption>
+        </figure>
+        <ol class="example-explanation">
+          <li><strong>Plan 1 is valid but makes an unnecessary LLM call.</strong> It opens the restaurant, reads the
+            menu, and asks <code>ai_eval</code> to find the cheapest item. Comparing numeric prices does not require a
+            language model.</li>
+          <li><strong>Plan 2 is invalid.</strong> It reads menu items before opening the restaurant detail page. The
+            call to <code>list_items</code> therefore violates the tool’s precondition, even though the program uses
+            fewer LLM calls.</li>
+          <li><strong>Plan 3 is valid with lower estimated cost.</strong> It opens the correct page and uses
+            <code>min</code> to select an item by price. This replaces a runtime LLM call with a deterministic
+            computation.
+          </li>
+        </ol>
+
+        <h3 class="title is-4">Checking whether tools compose</h3>
+        <p>Input and output types describe what data a tool accepts and returns. Preconditions and postconditions
+          describe the application state in which it can be used. Both matter: a well-typed call to
+          <code>list_items</code> is invalid if the browser is still on the restaurant list.
+        </p>
+        <p>For example, the following simplified contracts expose the navigation dependency. Here,
+          <code>rId</code> identifies the selected restaurant:
+        </p>
+        <pre aria-label="Example of compatible tool postconditions and preconditions"><code>goto_restaurant(rId)  # post: page = detail, selectedRestaurant = rId
+items = list_items()  # pre:  page = detail</code></pre>
+        <p>The first call establishes the state required by the second. In Plan 2 above,
+          <code>list_restaurants</code> leaves the browser on the list page and the navigation call is missing.
+          The checker therefore rejects <code>list_items</code> before executing it. This catches a state-flow
+          error that checking argument and return types alone would miss.
+        </p>
+        <p>JIT-Planner checks types and propagates declared state facts through the program’s control-flow graph.
+          Each tool call must have its preconditions satisfied by the current state. Static validation establishes
+          consistency with the declared contracts; optional runtime predicates test those assumptions against the
+          live application, for example by checking that the expected menu is visible after navigation.</p>
+
+        <h3 class="title is-4">Ranking the valid candidates</h3>
+        <p>Validity determines which programs are admissible. Cost estimation determines which admissible program
+          to execute. Plans 1 and 3 both satisfy the navigation dependency, but Plan 1 invokes <code>ai_eval</code>
+          to compare prices, whereas Plan 3 computes the minimum directly. The planner assigns Plan 3 a lower cost.</p>
+        <p>The cost model accumulates weighted tool and LLM-call costs over the control-flow graph and increases the
+          penalty with loop nesting depth. An LLM call inside a loop can be repeated many times, so its placement
+          matters as well as its presence. These scores estimate <strong>relative cost among valid plans</strong>;
+          they are not predictions of execution time in seconds.</p>
+      </div>
+    </section>
+
+    <section class="section" id="scheduler">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">JIT-Scheduler: matching execution strategy to the task</h2>
+        <p><strong>No single execution strategy minimizes latency across tasks.</strong> Independent subtasks can
+          favor parallelism, short dependent operations can favor serial execution, and high-variance interactions
+          can favor request hedging. JIT-Scheduler therefore treats worker allocation as a task-specific optimization
+          problem under a fixed worker budget.</p>
+        <p>JIT-Scheduler maintains its own cache of latency distributions learned offline from interactions with
+          page elements. Trace steps are associated with their eventual target element, so the recorded wall-clock
+          cost includes the agent’s exploratory work to locate and interact with that element. These distributions
+          measure agent interaction latency, rather than simply the duration of a DOM operation, and provide an
+          empirical proxy for interaction difficulty and variability across attempts.</p>
+        <p>For each candidate strategy, the scheduler predicts which elements workers will interact with and
+          samples their latency distributions using Monte Carlo estimation. Serial latency accumulates along one
+          execution; parallel latency depends on the slowest required worker and any sequential portion; hedged
+          latency depends on the first completed attempt. Coordination overhead is included when selecting the
+          strategy with the lowest estimated mean latency.</p>
+
+        <h3 class="title is-4">Examples of task–schedule compatibility</h3>
+        <ul class="example-explanation">
+          <li><strong>Serial:</strong> “How much is a matcha croissant and a regular iced matcha latte?” Both values can
+            be read from one page. Starting extra workers can cost more time than it saves.</li>
+          <li><strong>Parallel:</strong> “Get the first three reviews from each vendor.” Different workers can read
+            different vendors independently. Completion depends on the slowest required subtask.</li>
+          <li><strong>Hedge:</strong> “Buy any taco.” When a worker may get stuck on a difficult interaction, multiple
+            workers can attempt the same task. The system takes the first valid completion and terminates the remaining
+            workers.</li>
+        </ul>
+        <figure class="paper-figure scheduling-example interactive-figure" id="scheduling-interactive">
+          <div class="interactive-mount"></div>
+          <a class="static-figure" href="assets/figures/scheduling-example.png"
+            aria-label="View full-size scheduling example"><img src="assets/figures/scheduling-example.png"
+              alt="Scheduling example comparing serial, parallel, and hedged execution. Monte Carlo estimates using cached page-element latencies select hedging for an interaction with high latency variance."
+              loading="lazy" width="1326" height="1600"></a>
+          <figcaption><strong>Scheduling example.</strong> High variance in order-button latency can favor hedged
+            execution. Costs are illustrative estimates from Figure 4 of the paper, rather than aggregate benchmark
+            measurements.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Evaluation</h2>
+        <p>We evaluate on <strong>37 tasks across five applications</strong>: Dashdish, Gomail, and Omnizon from REAL,
+          and GitLab and Reddit from WebArena. Each REAL application has three selected benchmark tasks and six manually
+          curated tasks, balanced across scheduling strategies. Each WebArena application has five randomly selected
+          tasks and is evaluated with the planner only. Each configuration is run three times; task success is checked
+          by the benchmark harness.</p>
+        <p>Planner and scheduler results below are separate experiments. Latency includes online planning and execution;
+          one-time offline cache construction is reported separately.</p>
+
+        <h3 class="title is-4">End-to-end planner results</h3>
+        <p>Averaged across models, JIT-Planner reduces mean latency from <strong>122.1 seconds to 11.7 seconds</strong>
+          compared with Browser-Use, a 10.4× speedup. Providing cached tools alone reduces latency to 80.1 seconds.
+          <strong>Tool reuse alone leaves substantial inference overhead:</strong> Browser-Use +cache still invokes
+          an LLM between tool calls, while JIT-Planner compiles their composition into code, retaining inference
+          where semantic judgment is needed.
+        </p>
+        <div class="table-container" tabindex="0" role="region" aria-label="Planner results table">
+          <table class="table research-table" id="planner-results">
+            <caption>End-to-end planner results (Table 1, <a href="data/planner-results.csv" download>download as
+                CSV</a>). We measure latency in seconds and accuracy in task success rate.
+            </caption>
+            <thead>
+              <tr>
+                <th rowspan="2" scope="col">Setting</th>
+                <th colspan="2" scope="colgroup">Browser-Use</th>
+                <th colspan="2" scope="colgroup">Browser-Use +cache</th>
+                <th colspan="2" scope="colgroup">JIT-Planner</th>
+              </tr>
+              <tr>
+                <th scope="col">Latency ↓</th>
+                <th scope="col">Accuracy ↑</th>
+                <th scope="col">Latency ↓</th>
+                <th scope="col">Accuracy ↑</th>
+                <th scope="col">Latency ↓</th>
+                <th scope="col">Accuracy ↑</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-row">
+                <th colspan="7" scope="rowgroup">Model</th>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">GPT-4.1</th>
+                <td>150.1</td>
+                <td>61%</td>
+                <td>105.2</td>
+                <td>88%</td>
+                <td><strong>15.4</strong></td>
+                <td><strong>90%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Gemini-2.5-Flash</th>
+                <td>100.3</td>
+                <td>59%</td>
+                <td>69.3</td>
+                <td>81%</td>
+                <td><strong>7.2</strong></td>
+                <td><strong>94%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Gemini-2.5-Pro</th>
+                <td>115.9</td>
+                <td>77%</td>
+                <td>65.8</td>
+                <td>86%</td>
+                <td><strong>12.6</strong></td>
+                <td><strong>97%</strong></td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="group-row">
+                <th colspan="7" scope="rowgroup">Application</th>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Dashdish</th>
+                <td>118.8</td>
+                <td>65%</td>
+                <td>62.8</td>
+                <td>100%</td>
+                <td><strong>14.5</strong></td>
+                <td><strong>100%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">GitLab</th>
+                <td>144.7</td>
+                <td>49%</td>
+                <td>69.7</td>
+                <td>67%</td>
+                <td><strong>9.9</strong></td>
+                <td><strong>87%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Gomail</th>
+                <td>133.8</td>
+                <td>63%</td>
+                <td>94.6</td>
+                <td>80%</td>
+                <td><strong>10.4</strong></td>
+                <td><strong>96%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Omnizon</th>
+                <td>113.9</td>
+                <td>76%</td>
+                <td>86.8</td>
+                <td>84%</td>
+                <td><strong>15.5</strong></td>
+                <td><strong>89%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">Reddit</th>
+                <td>81.3</td>
+                <td>72%</td>
+                <td>82.7</td>
+                <td>89%</td>
+                <td><strong>4.3</strong></td>
+                <td><strong>93%</strong></td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="group-row">
+                <th colspan="7" scope="rowgroup">Task cardinality</th>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">C-Low</th>
+                <td>101.5</td>
+                <td>64%</td>
+                <td>65.2</td>
+                <td>86%</td>
+                <td><strong>9.4</strong></td>
+                <td><strong>94%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">C-Medium</th>
+                <td>119.0</td>
+                <td>75%</td>
+                <td>91.2</td>
+                <td>85%</td>
+                <td><strong>13.7</strong></td>
+                <td><strong>94%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">C-High</th>
+                <td>169.0</td>
+                <td>58%</td>
+                <td>96.2</td>
+                <td>84%</td>
+                <td><strong>14.3</strong></td>
+                <td><strong>92%</strong></td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr class="group-row">
+                <th colspan="7" scope="rowgroup">Task length</th>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">T-Short</th>
+                <td>70.2</td>
+                <td>73%</td>
+                <td>51.5</td>
+                <td>88%</td>
+                <td><strong>7.1</strong></td>
+                <td><strong>98%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">T-Medium</th>
+                <td>134.9</td>
+                <td>59%</td>
+                <td>86.8</td>
+                <td>93%</td>
+                <td><strong>13.0</strong></td>
+                <td><strong>92%</strong></td>
+              </tr>
+              <tr class="result-row">
+                <th scope="row">T-Long</th>
+                <td>195.3</td>
+                <td>62%</td>
+                <td>121.2</td>
+                <td>70%</td>
+                <td><strong>18.4</strong></td>
+                <td><strong>89%</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The gains vary across applications. Reddit tasks often compile to deterministic tool sequences and show an
+          18.9× speedup.
+          Omnizon tasks can require runtime semantic judgment, so their programs retain LLM calls and show a smaller
+          7.4× speedup. With identical cached tools, GPT-5.4 CUA remains 1.5–2.4× slower
+          than JIT-Planner at comparable accuracy across task complexity tiers on the 27 REAL tasks.</p>
+
+        <h3 class="title is-4">Planning accuracy and efficiency</h3>
+        <p>Across the three models in the paper’s aggregate statistical analysis—GPT-4.1, Gemini-2.5-Flash, and
+          Gemini-2.5-Pro—protocol enforcement raises the <strong>valid-plan rate from 77.1% to 90.6%</strong>.
+          This analysis pools all plan-generation tasks and candidate samples for those models. Individually,
+          Gemini-2.5-Pro improves from 79% to 96%, and GPT-4.1 from 78% to 91%. These measure <em>plan validity</em>,
+          which is distinct from end-to-end task success.</p>
+        <figure class="paper-figure protocol-figure interactive-figure" id="protocol-interactive">
+          <div class="interactive-mount"></div>
+          <a class="static-figure" href="assets/figures/protocol-accuracy.png"
+            aria-label="View full-size protocol accuracy figure"><img src="assets/figures/protocol-accuracy.png"
+              alt="Plan-generation accuracy and latency across seven language models with and without the invariant-enforcing protocol."
+              loading="lazy" width="1800" height="1737"></a>
+          <figcaption><strong>Effect of the tool protocol.</strong> Supplying preconditions and postconditions improves
+            the latency–accuracy frontier for plan generation on REAL tasks. Figure 5 of the paper.</figcaption>
+        </figure>
+        <p>The benefit is particularly pronounced on long-horizon tasks: across the nine T-Long tasks,
+          Gemini-2.5-Pro’s valid-plan rate rises from 58% to 93%. As a case study, on one 19-step GitLab task,
+          the protocol increases Gemini-2.5-Pro’s Pass@3 from 9% to 100%:
+          the probability of obtaining at least one valid plan within three candidates. With eight parallel workers, the
+          probability of finding a valid plan reaches approximately 100% within eight seconds. This focused task
+          analysis illustrates why checking tool contracts also reduces time spent generating unsuccessful plans.</p>
+        <figure class="paper-figure interactive-figure" id="efficiency-interactive">
+          <div class="interactive-mount"></div>
+          <a class="static-figure" href="assets/figures/planning-efficiency.png"
+            aria-label="View full-size planning efficiency figure"><img src="assets/figures/planning-efficiency.png"
+              alt="Pass@k and Pass@t curves for Gemini-2.5-Pro, GPT-4.1 and GPT-5, showing higher valid-plan rates with the protocol."
+              loading="lazy" width="2400" height="1073"></a>
+          <figcaption><strong>Time to a valid plan.</strong> Pass@k measures success within a candidate budget; Pass@t
+            measures success within a time budget. Results are for the 19-step GitLab task. Figure 8 of the paper.
+          </figcaption>
+        </figure>
+
+        <h3 class="title is-4">Scheduling results: task–schedule compatibility</h3>
+        <p>The scheduler experiments test whether choosing a schedule for each task improves on a fixed policy.
+          The 27 REAL tasks include nine per application, curated to include three for each latency-optimal strategy:
+          Serial, Parallel, and Hedge. These oracle labels use GPT-4.1 measurements averaged over three runs.
+          This selected task set exposes the different regimes in which each strategy is useful.</p>
+        <p>Task cardinality alone does not determine the compatible schedule. Counting how many restaurants offer
+          delivery processes ten restaurants but is fastest under Serial in the paper’s oracle analysis; inspecting
+          four coffee-maker product pages is fastest under Parallel. The number of elements is only part of the
+          cost: interaction structure, worker overhead, and latency variation also affect the choice.</p>
+        <p>On the 27 REAL tasks with a four-vCPU budget, JIT-Scheduler with Gemini-2.5-Pro achieves <strong>109.9
+            seconds at 86.4% accuracy</strong>, compared with OpenAI CUA’s 258.7 seconds at 77.8%. This is a 2.4×
+          speedup and an 8.6 percentage-point accuracy gain, rounded to 9 in the paper.</p>
+        <figure class="paper-figure scheduler-figure interactive-figure" id="scheduler-interactive">
+          <div class="interactive-mount"></div>
+          <a class="static-figure" href="assets/figures/scheduling-results.png"
+            aria-label="View full-size scheduler results figure"><img src="assets/figures/scheduling-results.png"
+              alt="Accuracy versus latency for serial, parallel, hedged, JIT and oracle scheduling, with computer-use agent baselines."
+              loading="lazy" width="1800" height="1290"></a>
+          <figcaption><strong>Accuracy–latency trade-offs.</strong> Higher and farther left is better. Oracle-Scheduler
+            is a reference with knowledge of true latencies. Figure 10 of the paper.</figcaption>
+        </figure>
+        <p>Fixed strategies expose different latency–accuracy trade-offs. For Gemini-2.5-Pro, Hedge is faster than
+          JIT-Scheduler
+          (98.4 seconds) but less accurate (71.6%). Parallel is more accurate (88.9%) but slower (148.5 seconds).
+          JIT-Scheduler adapts the strategy per task rather than committing to one policy globally.</p>
+      </div>
+    </section>
+
+    <section class="section" id="limitations">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Limitations</h2>
+        <p>The approach is best suited to repeated work on familiar applications. Offline tool synthesis takes 25–90
+          minutes per application, and scheduler trace collection takes 25–45 minutes; these costs are amortized across
+          subsequent tasks. UI changes can invalidate cached tools, and stochastic behavior such as rate limiting can
+          force a fallback to generic tools, reducing the latency benefit. The evaluation covers a selected task suite
+          rather than the full benchmarks; desktop and mobile environments were not evaluated.</p>
+      </div>
+    </section>
+
+    <section class="section" id="beyond-web">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Beyond web agents</h2>
+
+        <p>
+          The same approach could extend beyond browsers when a task can be expressed as a composition of reusable
+          operations with explicit preconditions and postconditions. An agent would compile a natural-language request
+          into candidate programs, reject programs whose operation contracts do not compose, and rank the remaining
+          candidates by estimated cost. Scheduling is a separate problem: once a program is selected, the system decides
+          how to allocate workers to its independent or redundant work.
+        </p>
+
+        <p>
+          <strong>Data processing.</strong> Consider an agent asked to compute weekly revenue by region from raw tables.
+          The agent may generate a pipeline such as <code>load → deduplicate → join → aggregate</code>. Each operator
+          exposes preconditions and postconditions over the logical data state: for example, aggregation may require
+          unique transaction IDs and an attached region field, while deduplication and joining establish those
+          properties. The planner rejects pipelines whose operator contracts do not compose and ranks the remaining
+          plans
+          using estimated execution cost. This representation is similar to dataflow systems such as
+          <a href="https://www.microsoft.com/en-us/research/project/dryad/" target="_blank"
+            rel="noopener noreferrer">Dryad</a>,
+          which express computations as DAGs of operators connected by data channels. After selecting a valid DAG, the
+          scheduler decides how to execute it—for example, how many workers to assign to independent partitions—using
+          measured operator costs.
+        </p>
+
+        <p>
+          <strong>Build and test.</strong> Consider an agent asked to find the commit that caused
+          <code>test_checkout</code> to fail. It could generate a program that checks out revisions, builds them, and
+          runs
+          the target test. Contracts make the dependency explicit: a test for revision <code>r</code> requires an
+          artifact
+          built from <code>r</code>, and a successful build establishes that artifact. The planner can therefore reject
+          invalid workflows and choose among different search programs, such as bisection or evaluating several
+          candidate
+          revisions concurrently. Build systems such as
+          <a href="https://bazel.build/basics/artifact-based-builds" target="_blank" rel="noopener noreferrer">Bazel</a>
+          already expose dependency graphs and execute ready actions in parallel. Given a selected search program, the
+          scheduler could decide how many revisions to evaluate concurrently or whether to redundantly execute unusually
+          slow, isolated builds or tests.
+        </p>
+
+        <p>
+          <strong>Runtime checks complement static validation.</strong> Contract checking establishes that a generated
+          program is consistent with the declared behavior of its operations; it does not guarantee that those
+          declarations
+          hold at runtime. A build action, for example, may declare that it produces an artifact for revision
+          <code>r</code>, but execution must still verify that the artifact was actually produced. Similarly, a data
+          transformation may require a particular schema that must be checked against the data encountered at runtime.
+          Static and runtime checks therefore serve different roles: the former reject invalid compositions before
+          execution, while the latter detect violations of the assumptions on which the plan depends.
+        </p>
+
+        <p>
+          <strong>Redundant execution requires commit semantics.</strong> Hedging is straightforward for read-only work
+          but more subtle when workers can mutate shared state. Multiple workers may perform speculative work
+          concurrently,
+          but at most one should commit an externally visible effect. Data-processing systems address a related problem
+          using mechanisms such as
+          <a href="https://storage.googleapis.com/gweb-research2023-media/pubtools/4449.pdf#page=5" target="_blank"
+            rel="noopener noreferrer">MapReduce's atomic output commit</a>;
+          other domains may rely on isolation, idempotent operations, or explicit coordination around the commit point.
+          Parallel execution similarly must preserve dependencies through shared mutable state.
+        </p>
+
+        <p>
+          Extending Agent JIT Compilation to these domains would therefore require domain-specific contracts, runtime
+          checks, and cost models. Repeated workloads are especially suitable because tool
+          synthesis and latency profiling can be amortized across many tasks. Evaluating these extensions remains future
+          work.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="citation">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">BibTeX</h2>
+        <pre><code id="bibtex">@inproceedings{winston2026agentjit,
+  title     = {Agent {JIT} Compilation for Latency-Optimizing Web Agent Planning and Scheduling},
+  author    = {Winston, Caleb and Wang, Ron Yifeng and Mirhoseini, Azalia and Kozyrakis, Christos},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning},
+  pages     = {135161--135186},
+  year      = {2026},
+  volume    = {306},
+  series    = {Proceedings of Machine Learning Research},
+  publisher = {PMLR},
+  url       = {https://proceedings.mlr.press/v306/winston26b.html}
+}</code></pre>
+        <p class="citation-actions"><button type="button" id="copy-citation" class="button is-small">Copy
+            BibTeX</button> <a href="assets/citation.bib" download>Download citation</a><span id="copy-status"
+            role="status"></span></p>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-8 content">
+          <p>This website is adapted from the <a href="https://nerfies.github.io/">Nerfies project page</a>, using its
+            <a href="https://github.com/nerfies/nerfies.github.io">source code</a> and Bulma styling. The adapted
+            website template is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA
+              4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

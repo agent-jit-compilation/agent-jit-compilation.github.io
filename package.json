@@ -1,0 +1,14 @@
+{
+  "name": "agent-jit-compilation-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static research project page for Agent JIT Compilation (ICML 2026)",
+  "scripts": {
+    "start": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0"
+  }
+}
