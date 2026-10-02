@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html styles.css script.js interactions.js planner-charts.js \
-            paper.pdf robots.txt sitemap.xml .nojekyll _site/
+            paper.pdf robots.txt sitemap.xml .nojekyll google9263857504ed3ba6.html _site/
           cp -R assets data _site/
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
