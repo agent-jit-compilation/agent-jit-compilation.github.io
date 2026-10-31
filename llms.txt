@@ -1,0 +1,26 @@
+# Agent JIT Compilation
+
+> Agent JIT Compilation (ICML 2026) compiles natural-language web tasks into checked, cost-ranked programs (JIT-Planner) and chooses serial, parallel, or hedged execution per task (JIT-Scheduler). Across five web applications, JIT-Planner is 10.4× faster than Browser-Use with a 28-point accuracy gain; JIT-Scheduler is 2.4× faster than OpenAI CUA.
+
+Caleb Winston, Ron Yifeng Wang, Azalia Mirhoseini, Christos Kozyrakis. Stanford University.
+
+## Project
+
+- [Project page](https://agent-jit-compilation.github.io/index.html.md): method, results, and limitations
+- [Leaderboard](https://agent-jit-compilation.github.io/leaderboard.html.md): latency and success of harness and model pairs on 27 REAL tasks
+- [Leaderboard data](https://agent-jit-compilation.github.io/data/leaderboard.csv): CSV with each row's success rule and source
+
+## Paper
+
+- [PMLR](https://proceedings.mlr.press/v306/winston26b.html): Proceedings of ICML 2026, PMLR 306
+- [arXiv](https://arxiv.org/abs/2605.21470)
+- [PDF](https://agent-jit-compilation.github.io/paper.pdf)
+- [BibTeX](https://agent-jit-compilation.github.io/assets/citation.bib)
+
+## Code
+
+- [GitHub](https://github.com/agent-jit-compilation/agent-jit-compilation): JIT-Planner, JIT-Scheduler, tool registries, and recorded results
+
+## Optional
+
+- [ICML poster](https://icml.cc/virtual/2026/poster/66062)
