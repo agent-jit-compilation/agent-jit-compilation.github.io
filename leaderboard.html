@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="assets/mast-logo.png">
+  <title>Leaderboard | Agent JIT Compilation</title>
+  <meta name="description" content="Latency and success of web-agent harness and model pairs on 27 REAL tasks: JIT-Planner, JIT-Scheduler, Browser-Use, and computer-use agents.">
+  <link rel="canonical" href="https://agent-jit-compilation.github.io/leaderboard.html">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Agent JIT Compilation Leaderboard">
+  <meta property="og:description" content="Latency and success of web-agent harness and model pairs on 27 REAL tasks: JIT-Planner, JIT-Scheduler, Browser-Use, and computer-use agents.">
+  <meta property="og:url" content="https://agent-jit-compilation.github.io/leaderboard.html">
+  <meta property="og:site_name" content="Agent JIT Compilation">
+  <link rel="alternate" type="text/markdown" title="Markdown" href="leaderboard.html.md">
+  <link rel="stylesheet" href="assets/vendor/bulma.min.css">
+  <link rel="stylesheet" href="styles.css?v=98fe0eda4083">
+  <script src="data/leaderboard.js?v=a32bddd62113" defer></script>
+  <script src="leaderboard-chart.js?v=aabf26f73f42" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#leaderboard">Skip to content</a>
+  <main>
+    <section class="hero leaderboard-hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <p class="leaderboard-back"><a href="./">← Agent JIT Compilation (ICML 2026)</a></p>
+          <h1 class="title is-2">Leaderboard</h1>
+          <p class="leaderboard-lead">We evaluate each (harness, model) pair on 27 REAL tasks with three runs each.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="leaderboard">
+      <div class="container is-max-desktop content">
+        <div class="leaderboard-card" id="leaderboard-card">
+          <figure class="leaderboard-figure" id="leaderboard-figure" hidden>
+            <div id="leaderboard-chart"></div>
+          </figure>
+          <div class="table-container" id="leaderboard-table" tabindex="0" role="region" aria-label="Leaderboard table">
+            <table class="table research-table leaderboard-table" id="leaderboard-results">
+              <caption>Ranked by mean latency.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Harness</th>
+                  <th scope="col">Model</th>
+                  <th scope="col">Latency (s) ↓</th>
+                  <th scope="col">Success ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr class="leaderboard-row">
+                <td>1</td>
+                <th scope="row"><span class="harness-dot family-jit is-filled" aria-hidden="true"></span>JIT-Planner <span class="pareto-pill">Pareto optimal</span></th>
+                <td>Gemini-2.5-Flash</td>
+                <td>8.3</td>
+                <td>92.6%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>2</td>
+                <th scope="row"><span class="harness-dot family-jit is-filled" aria-hidden="true"></span>JIT-Planner</th>
+                <td>Gemini-2.5-Pro</td>
+                <td>14.3</td>
+                <td>92.6%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>3</td>
+                <th scope="row"><span class="harness-dot family-jit is-filled" aria-hidden="true"></span>JIT-Planner <span class="pareto-pill">Pareto optimal</span></th>
+                <td>GPT-6.1 Terra</td>
+                <td>17.7</td>
+                <td>95.1%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>4</td>
+                <th scope="row"><span class="harness-dot family-jit is-filled" aria-hidden="true"></span>JIT-Planner</th>
+                <td>GPT-4.1</td>
+                <td>17.8</td>
+                <td>92.6%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>5</td>
+                <th scope="row"><span class="harness-dot family-cua is-filled" aria-hidden="true"></span>CUA +cache</th>
+                <td>GPT-5.4</td>
+                <td>36.2</td>
+                <td>95.0%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>6</td>
+                <th scope="row"><span class="harness-dot family-browser-use is-filled" aria-hidden="true"></span>Browser-Use +cache</th>
+                <td>GPT-6.1 Terra</td>
+                <td>39.4</td>
+                <td>88.9%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>7</td>
+                <th scope="row"><span class="harness-dot family-browser-use is-filled" aria-hidden="true"></span>Browser-Use +cache</th>
+                <td>Gemini-2.5-Pro</td>
+                <td>69.7</td>
+                <td>82.7%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>8</td>
+                <th scope="row"><span class="harness-dot family-browser-use is-filled" aria-hidden="true"></span>Browser-Use +cache</th>
+                <td>Gemini-2.5-Flash</td>
+                <td>70.2</td>
+                <td>76.5%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>9</td>
+                <th scope="row"><span class="harness-dot family-browser-use" aria-hidden="true"></span>Browser-Use</th>
+                <td>Gemini-2.5-Flash</td>
+                <td>96.5</td>
+                <td>55.6%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>10</td>
+                <th scope="row"><span class="harness-dot family-browser-use is-filled" aria-hidden="true"></span>Browser-Use +cache</th>
+                <td>GPT-4.1</td>
+                <td>104.4</td>
+                <td>85.2%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>11</td>
+                <th scope="row"><span class="harness-dot family-jit" aria-hidden="true"></span>JIT-Scheduler</th>
+                <td>Gemini-2.5-Pro</td>
+                <td>109.9</td>
+                <td>86.4%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>12</td>
+                <th scope="row"><span class="harness-dot family-jit" aria-hidden="true"></span>JIT-Scheduler</th>
+                <td>Gemini-2.5-Flash</td>
+                <td>118.4</td>
+                <td>60.5%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>13</td>
+                <th scope="row"><span class="harness-dot family-browser-use" aria-hidden="true"></span>Browser-Use</th>
+                <td>Gemini-2.5-Pro</td>
+                <td>129.6</td>
+                <td>70.4%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>14</td>
+                <th scope="row"><span class="harness-dot family-cua" aria-hidden="true"></span>Vendor CUA</th>
+                <td>Claude Sonnet 4</td>
+                <td>141.7</td>
+                <td>79.0%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>15</td>
+                <th scope="row"><span class="harness-dot family-jit" aria-hidden="true"></span>JIT-Scheduler</th>
+                <td>GPT-4.1</td>
+                <td>142.6</td>
+                <td>77.8%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>16</td>
+                <th scope="row"><span class="harness-dot family-browser-use" aria-hidden="true"></span>Browser-Use</th>
+                <td>GPT-4.1</td>
+                <td>157.3</td>
+                <td>58.0%</td>
+              </tr>
+              <tr class="leaderboard-row">
+                <td>17</td>
+                <th scope="row"><span class="harness-dot family-cua" aria-hidden="true"></span>Vendor CUA</th>
+                <td>computer-use-preview</td>
+                <td>258.7</td>
+                <td>77.8%</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note"><a href="data/leaderboard.csv" download>Download CSV</a></p>
+          <details class="harness-details">
+            <summary>Harness definitions</summary>
+            <ul>
+              <li><strong>Tools:</strong> reusable app tools (Synthesized), browser actions (Primitives), or screenshots
+                (Pixels).</li>
+              <li><strong>Control:</strong> the model picks each action (Per-step), or a checked program runs
+                (Compiled).</li>
+              <li><strong>Schedule:</strong> one browser (Serial), or serial, parallel, or hedged per task
+                (Adaptive).</li>
+            </ul>
+            <div class="table-container" tabindex="0" role="region" aria-label="Harness definitions">
+              <table class="table research-table harness-table" id="harness-key">
+                <thead>
+                  <tr>
+                    <th scope="col">Harness</th>
+                    <th scope="col">Tools</th>
+                    <th scope="col">Control</th>
+                    <th scope="col">Schedule</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-jit is-filled" aria-hidden="true"></span>JIT-Planner</th>
+                  <td>Synthesized</td>
+                  <td>Compiled</td>
+                  <td>Serial</td>
+                </tr>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-jit" aria-hidden="true"></span>JIT-Scheduler</th>
+                  <td>Primitives</td>
+                  <td>Per-step</td>
+                  <td>Adaptive</td>
+                </tr>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-browser-use is-filled" aria-hidden="true"></span>Browser-Use +cache</th>
+                  <td>Synthesized</td>
+                  <td>Per-step</td>
+                  <td>Serial</td>
+                </tr>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-browser-use" aria-hidden="true"></span>Browser-Use</th>
+                  <td>Primitives</td>
+                  <td>Per-step</td>
+                  <td>Serial</td>
+                </tr>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-cua is-filled" aria-hidden="true"></span>CUA +cache</th>
+                  <td>Synthesized</td>
+                  <td>Per-step</td>
+                  <td>Serial</td>
+                </tr>
+                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-cua" aria-hidden="true"></span>Vendor CUA</th>
+                  <td>Pixels</td>
+                  <td>Per-step</td>
+                  <td>Serial</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-8 content">
+          <p>This website is adapted from the <a href="https://nerfies.github.io/">Nerfies project page</a>, using its
+            <a href="https://github.com/nerfies/nerfies.github.io">source code</a> and Bulma styling. The adapted
+            website template is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA
+              4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

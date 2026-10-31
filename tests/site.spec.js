@@ -30,6 +30,104 @@ test('paper resources, source-backed table and citation', async ({ page, context
   }
 });
 
+const leaderboardCsv = () => fs.readFileSync('data/leaderboard.csv', 'utf8').trim().split('\n').slice(1)
+  .map(line => line.match(/("[^"]*"|[^,]*)(,|$)/g).map(cell => cell.replace(/,$/, '').replace(/^"|"$/g, '')));
+
+test('leaderboard table matches its CSV source and ranks by either metric', async ({ page }) => {
+  await page.goto('/leaderboard.html');
+  const leaderboard = leaderboardCsv();
+  const rows = page.locator('#leaderboard-results .leaderboard-row');
+  await expect(rows).toHaveCount(leaderboard.length);
+  for (const [i, [rank, harness, model, , , , , latency, success, , , , , pareto]] of leaderboard.entries()) {
+    const cells = (await rows.nth(i).locator('th, td').allTextContents()).map(text => text.trim());
+    expect(cells).toEqual([rank, `${harness}${pareto ? ' Pareto optimal' : ''}`, model, Number(latency).toFixed(1),
+      `${Number(success).toFixed(1)}%`]);
+  }
+  const latencies = leaderboard.map(row => Number(row[7]));
+  expect(latencies).toEqual([...latencies].sort((a, b) => a - b));
+  await expect(page.locator('#harness-key .harness-row')).toHaveCount(new Set(leaderboard.map(row => row[1])).size);
+  const headers = page.locator('#leaderboard-results thead th');
+  await expect(headers.nth(3)).toHaveAttribute('aria-sort', 'ascending');
+  await page.getByRole('button', { name: 'Success', exact: true }).click();
+  await expect(headers.nth(4)).toHaveAttribute('aria-sort', 'descending');
+  await expect(headers.nth(3)).toHaveAttribute('aria-sort', 'none');
+  const bySuccess = [...leaderboard].sort((a, b) => b[8] - a[8] || a[7] - b[7]);
+  await expect(rows.first()).toContainText(`${bySuccess[0][1]}`);
+  await expect(rows.first().locator('td').first()).toHaveText('1');
+  await expect(page.locator('#leaderboard-results caption')).toHaveText('Ranked by success.');
+  await page.getByRole('button', { name: 'Success', exact: true }).click();
+  await expect(rows.first()).toContainText(`${bySuccess.at(-1)[2]}`);
+  await expect(page.locator('#leaderboard-results caption')).toHaveText('Ranked by success, lowest first.');
+  await page.getByRole('button', { name: 'Latency (s)', exact: true }).click();
+  await expect(rows.first()).toContainText(`${leaderboard[0][2]}`);
+  await expect(rows.first().locator('td').nth(2)).toHaveText(Number(leaderboard[0][7]).toFixed(1));
+});
+
+test('leaderboard plot separates harnesses and marks the Pareto frontier', async ({ page }) => {
+  await page.goto('/leaderboard.html');
+  const leaderboard = leaderboardCsv();
+  const figure = page.locator('#leaderboard-figure');
+  await expect(figure).toBeVisible();
+  await expect(figure.locator('.chart-point')).toHaveCount(leaderboard.length);
+  await expect(figure.locator('.chart-point.is-pareto')).toHaveCount(leaderboard.filter(row => row[13]).length);
+  await expect(figure.locator('.lb-label.is-pareto')).toHaveCount(leaderboard.filter(row => row[13]).length);
+  await expect(figure.locator('.lb-pareto')).toHaveCount(2);
+  await expect(page.locator('#leaderboard-selection')).toHaveText('Select a point for details.');
+  await figure.getByRole('button', { name: 'JIT-Planner, Gemini-2.5-Flash: 8.3 seconds, 92.6% success' }).focus();
+  await expect(page.locator('#leaderboard-tooltip')).toContainText('92.6% · 8.3 s');
+  await expect(page.locator('#leaderboard-selection')).toHaveText('JIT-Planner · Gemini-2.5-Flash: 8.3 s, 92.6%. vs. Browser-Use +cache: 8.5× faster, +16.1 pts. Pareto optimal.');
+  await page.keyboard.press('Escape');
+  // One connector between each pair of latency-adjacent entries of the same model.
+  const connectors = rows => Object.values(Object.groupBy(rows, row => row[2])).reduce((n, group) => n + group.length - 1, 0);
+  await figure.getByRole('button', { name: 'Connect same model', exact: true }).click();
+  await expect(figure.locator('.lb-model-line')).toHaveCount(connectors(leaderboard));
+  await figure.getByRole('button', { name: 'Show JIT-Scheduler in leaderboard plot', exact: true }).click();
+  await expect(figure.locator('.chart-point')).toHaveCount(leaderboard.filter(row => row[1] !== 'JIT-Scheduler').length);
+  await expect(figure.locator('.lb-model-line')).toHaveCount(connectors(leaderboard.filter(row => row[1] !== 'JIT-Scheduler')));
+  await expect(page.locator('#leaderboard-results')).toBeVisible();
+});
+
+for (const width of [1440, 390, 320]) {
+  test(`leaderboard page layout and accessibility at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/leaderboard.html');
+    await page.evaluate(() => document.fonts.ready);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+    await page.screenshot({ path: `test-results/leaderboard-${width}.png`, fullPage: true });
+  });
+}
+
+test('llms.txt and Markdown pages resolve and stay in sync', async ({ page }) => {
+  const llms = await (await page.request.get('/llms.txt')).text();
+  expect(llms).toMatch(/^# Agent JIT Compilation\n\n> /);
+  const local = [...llms.matchAll(/\]\(https:\/\/agent-jit-compilation\.github\.io\/([^)]+)\)/g)].map(match => match[1]);
+  expect(local).toEqual(expect.arrayContaining(['index.html.md', 'leaderboard.html.md', 'data/leaderboard.csv']));
+  for (const path of local) expect((await page.request.get(`/${path}`)).status(), path).toBe(200);
+  for (const [html, md] of [['/', 'index.html.md'], ['/leaderboard.html', 'leaderboard.html.md']]) {
+    await page.goto(html);
+    await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute('href', md);
+  }
+  const markdown = fs.readFileSync('leaderboard.html.md', 'utf8');
+  for (const [rank, harness, model, , , , , latency, success] of leaderboardCsv()) {
+    expect(markdown).toContain(`| ${rank} | ${harness}`);
+    expect(markdown).toContain(`| ${model} | ${Number(latency).toFixed(1)} | ${Number(success).toFixed(1)}% |`);
+  }
+  expect(fs.readFileSync('index.html.md', 'utf8')).toContain('## Abstract');
+});
+
+test('leaderboard page is readable without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto('http://127.0.0.1:4173/leaderboard.html');
+  await expect(page.locator('h1')).toHaveText('Leaderboard');
+  await expect(page.locator('.leaderboard-row')).toHaveCount(leaderboardCsv().length);
+  await expect(page.locator('#leaderboard-figure')).toBeHidden();
+  await expect(page.locator('#leaderboard-results')).toBeVisible();
+  await expect(page.locator('.harness-row')).toHaveCount(6);
+  await context.close();
+});
+
 for (const width of [1440, 768, 390, 320]) {
   test(`layout and accessibility at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
@@ -59,6 +157,7 @@ test('all examples and results are readable without JavaScript', async ({ browse
   await page.goto('http://127.0.0.1:4173');
   await expect(page.locator('h1')).toContainText('Agent JIT Compilation');
   await expect(page.locator('.result-row')).toHaveCount(14);
+  await expect(page.getByRole('link', { name: 'Leaderboard', exact: true })).toHaveAttribute('href', 'leaderboard.html');
   await expect(page.getByText('Plan 2 is invalid.', { exact: false })).toBeVisible();
   await expect(page.locator('#bibtex')).toContainText('winston2026agentjit');
   await context.close();
@@ -259,4 +358,18 @@ test('efficiency panels share model selection and expose keyboard budgets', asyn
   await expect(figure.locator('#pass-t-readout')).toContainText('Without protocol: 40.3%');
   await figure.getByRole('button',{name:'Highlight GPT-5',exact:true}).click();
   await expect(figure.locator('.efficiency-curve').first()).toHaveCSS('opacity','1');
+});
+
+test('main page update links to the leaderboard and matches its Terra rows', async ({ page }) => {
+  await page.goto('/');
+  const update = page.locator('#updates li').first();
+  await expect(update.locator('time')).toHaveAttribute('datetime', '2026-10-31');
+  await expect(update.getByRole('link', { name: 'leaderboard' })).toHaveAttribute('href', 'leaderboard.html');
+  const terra = Object.fromEntries(leaderboardCsv().filter(row => row[2] === 'GPT-6.1 Terra').map(row => [row[1], row]));
+  const [jit, cache] = [terra['JIT-Planner'], terra['Browser-Use +cache']];
+  expect(Number(jit[8])).toBeGreaterThan(Number(cache[8]));
+  await expect(update).toContainText(`${(Number(cache[7]) / Number(jit[7])).toFixed(1)}× faster than Browser-Use +cache`);
+  const box = await page.locator('#updates').boundingBox();
+  const abstract = await page.locator('#abstract').boundingBox();
+  expect(box.y).toBeLessThan(abstract.y);
 });
