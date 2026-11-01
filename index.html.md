@@ -6,7 +6,7 @@ Caleb Winston, Ron Yifeng Wang, Azalia Mirhoseini, Christos Kozyrakis. Stanford 
 
 ## Updates
 
-- **Oct 31, 2026** We've added GPT-6.1 Terra to the [leaderboard](https://agent-jit-compilation.github.io/leaderboard.html). JIT-Planner is 2.2× faster than Browser-Use +cache on it, with higher success.
+- **Oct 31, 2026** We've added GPT-6.1 Terra and Claude Code (Claude Sonnet 5.5, agent-browser skill) to the [leaderboard](https://agent-jit-compilation.github.io/leaderboard.html). JIT-Planner with GPT-6.1 Terra is 2.2× faster than Browser-Use +cache on the same model and 3.7× faster than Claude Code, with higher success than both.
 
 ## Abstract
 

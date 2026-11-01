@@ -8,6 +8,9 @@ means over all recorded runs, including failures. Success is binary:
 - JIT-Planner and Browser-Use +cache record only a score, so a run passes at full score;
   this reproduces the paper's binary JIT-Planner tiers (Appendix Table 5).
 - CUA +cache (GPT-5.4) raw runs are not released; its row averages paper Table 4.
+- Claude Code (Claude Sonnet 5.5, agent-browser skill) rows are live runs from October 2026
+  (data/recorded/live/claude-code-sonnet-5.5.jsonl), passing at full score. Cost is Claude Code's
+  reported estimate per run; other rows have no comparable cost and leave cost_usd empty.
 - GPT-6.1 Terra rows are live runs from October 2026 (data/recorded/live/gpt-6.1-terra.jsonl), passing at full score.
   JIT-Planner latency is the selected plan's generation time plus its execution, as the paper's
   planner records report it; a run with no valid plan counts its online time.
@@ -32,10 +35,11 @@ HARNESSES = {
     'Browser-Use': ('Browser-Use', 'Primitives', 'Per-step', 'Serial'),
     'CUA +cache': ('CUA', 'Synthesized', 'Per-step', 'Serial'),
     'Vendor CUA': ('CUA', 'Pixels', 'Per-step', 'Serial'),
+    'Claude Code': ('CUA', 'Primitives', 'Per-step', 'Serial'),
 }
 # Validated categorical slots 1-3 (all pairs); filled markers mark synthesized tools.
 FAMILIES = {'JIT': ('JIT (ours)', '#2a78d6'), 'Browser-Use': ('Browser-Use', '#eb6834'),
-            'CUA': ('Computer-use agents', '#1baf7a')}
+            'CUA': ('Vendor agents', '#1baf7a')}
 
 
 def row(harness, model, task_stats, rule, source):
@@ -95,6 +99,17 @@ for harness in ('JIT-Planner', 'Browser-Use +cache'):
                                                for runs in terra.values()],
                     'Full score', 'Live runs, October 2026'))
 
+# Claude Code: live runs, pass at full score; cost as reported by Claude Code.
+claude_code, costs = defaultdict(list), []
+for line in (RECORDED / 'live/claude-code-sonnet-5.5.jsonl').read_text().splitlines():
+    run = json.loads(line)
+    claude_code[run['task_id']].append((run['timing']['online_s'], run['score'] >= 1 - 1e-9))
+    costs.append(run['trace']['agent_metadata']['claude_code_cost_usd'])
+rows.append(row('Claude Code', 'Claude Sonnet 5.5', [(mean(t[0] for t in runs), mean(t[1] for t in runs), len(runs))
+                                                     for runs in claude_code.values()],
+                'Full score', 'Live runs, October 2026'))
+run_cost = {('Claude Code', 'Claude Sonnet 5.5'): round(mean(costs), 3)}
+
 # Pixel-based CUA baselines: recorded runs, harness verdict.
 cua = defaultdict(list)
 for trial in json.loads((RECORDED / 'scheduler/cua-trials.json').read_text())['trials']:
@@ -114,6 +129,8 @@ for r in rows:
     r['pareto'] = 'pareto' if not any(o['latency_s'] <= r['latency_s'] and o['success_pct'] >= r['success_pct']
                                       and (o['latency_s'], o['success_pct']) != (r['latency_s'], r['success_pct'])
                                       for o in rows) else ''
+for r in rows:
+    r['cost_usd'] = run_cost.get((r['harness'], r['model']), '')
 fields = ['rank', *rows[0]]
 with (ROOT / 'data/leaderboard.csv').open('w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=fields, lineterminator='\n')
@@ -142,6 +159,20 @@ markup = ''.join(
                 <td>{r['success_pct']:.1f}%</td>
               </tr>
 ''' for rank, r in enumerate(rows, 1))
-(ROOT / 'leaderboard.html').write_text(head + '<tbody>\n' + markup + '              </tbody>' + tail)
+page = head + '<tbody>\n' + markup + '              </tbody>' + tail
+# The harness definitions table, from the same harness list.
+before, table = page.split('id="harness-key"', 1)
+head, rest = table.split('<tbody>\n', 1)
+head = before + 'id="harness-key"' + head
+body, tail = rest.split('                </tbody>', 1)
+markup = ''.join(
+    f'''                <tr class="harness-row">
+                  <th scope="row"><span class="harness-dot family-{family.lower()}{' is-filled' if tools == 'Synthesized' else ''}" aria-hidden="true"></span>{escape(name)}</th>
+                  <td>{tools}</td>
+                  <td>{control}</td>
+                  <td>{schedule}</td>
+                </tr>
+''' for name, (family, tools, control, schedule) in HARNESSES.items())
+(ROOT / 'leaderboard.html').write_text(head + '<tbody>\n' + markup + '                </tbody>' + tail)
 print(f"Exported {len(rows)} leaderboard rows; Pareto frontier: "
       + ', '.join(f"{r['harness']} ({r['model']})" for r in rows if r['pareto']))

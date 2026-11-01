@@ -124,7 +124,7 @@ test('leaderboard page is readable without JavaScript', async ({ browser }) => {
   await expect(page.locator('.leaderboard-row')).toHaveCount(leaderboardCsv().length);
   await expect(page.locator('#leaderboard-figure')).toBeHidden();
   await expect(page.locator('#leaderboard-results')).toBeVisible();
-  await expect(page.locator('.harness-row')).toHaveCount(6);
+  await expect(page.locator('.harness-row')).toHaveCount(new Set(leaderboardCsv().map(row => row[1])).size);
   await context.close();
 });
 
@@ -360,15 +360,20 @@ test('efficiency panels share model selection and expose keyboard budgets', asyn
   await expect(figure.locator('.efficiency-curve').first()).toHaveCSS('opacity','1');
 });
 
-test('main page update links to the leaderboard and matches its Terra rows', async ({ page }) => {
+test('main page update links to the leaderboard and matches its new rows', async ({ page }) => {
   await page.goto('/');
-  const update = page.locator('#updates li').first();
+  await expect(page.locator('#updates li')).toHaveCount(1);
+  const update = page.locator('#updates li');
   await expect(update.locator('time')).toHaveAttribute('datetime', '2026-10-31');
   await expect(update.getByRole('link', { name: 'leaderboard' })).toHaveAttribute('href', 'leaderboard.html');
-  const terra = Object.fromEntries(leaderboardCsv().filter(row => row[2] === 'GPT-6.1 Terra').map(row => [row[1], row]));
-  const [jit, cache] = [terra['JIT-Planner'], terra['Browser-Use +cache']];
-  expect(Number(jit[8])).toBeGreaterThan(Number(cache[8]));
-  await expect(update).toContainText(`${(Number(cache[7]) / Number(jit[7])).toFixed(1)}× faster than Browser-Use +cache`);
+  const rows = leaderboardCsv();
+  const find = (harness, model) => rows.find(row => row[1] === harness && row[2] === model);
+  const jit = find('JIT-Planner', 'GPT-6.1 Terra');
+  for (const [name, other] of [['Browser-Use +cache on the same model', find('Browser-Use +cache', 'GPT-6.1 Terra')],
+                               ['Claude Code', find('Claude Code', 'Claude Sonnet 5.5')]]) {
+    expect(Number(jit[8])).toBeGreaterThan(Number(other[8]));
+    await expect(update).toContainText(`${(Number(other[7]) / Number(jit[7])).toFixed(1)}× faster than ${name}`);
+  }
   const box = await page.locator('#updates').boundingBox();
   const abstract = await page.locator('#abstract').boundingBox();
   expect(box.y).toBeLessThan(abstract.y);
