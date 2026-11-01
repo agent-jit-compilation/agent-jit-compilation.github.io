@@ -183,6 +183,7 @@
       text += ` vs. ${parent.harness}: ${ratio >= 1 ? `${ratio.toFixed(1)}× faster` : `${(1 / ratio).toFixed(1)}× slower`}, ${delta >= 0 ? '+' : '−'}${Math.abs(delta).toFixed(1)} pts.`;
     }
     if (row.pareto) text += ' Pareto optimal.';
+    if (row.cost_usd) text += ` $${row.cost_usd.toFixed(2)} per run, as reported by ${row.harness}.`;
     return text;
   }
   function showPoint(row, node) {
@@ -191,7 +192,7 @@
     svg.querySelectorAll('.lb-model-line').forEach(line => line.classList.toggle('is-dim', line.dataset.model !== row.model));
     // Values lead the tooltip; the harness and model follow.
     const value = document.createElement('strong'); value.textContent = `${row.success_pct.toFixed(1)}% · ${row.latency_s.toFixed(1)} s`;
-    const name = document.createElement('span'); name.textContent = `${row.harness} · ${row.model}`;
+    const name = document.createElement('span'); name.textContent = `${row.harness} · ${row.model}${row.cost_usd ? ` · $${row.cost_usd.toFixed(2)}/run` : ''}`;
     tooltip.replaceChildren(value, name); tooltip.hidden = false;
     const yPercent = y(row.success_pct) / H * 100;
     tooltip.style.left = `${Math.min(68, Math.max(2, x(row.latency_s) / W * 100 + 1.5))}%`;

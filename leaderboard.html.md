@@ -10,17 +10,18 @@ We evaluate each (harness, model) pair on 27 REAL tasks (Dashdish, Gomail, Omniz
 | 4 | JIT-Planner | GPT-4.1 | 17.8 | 92.6% |
 | 5 | CUA +cache | GPT-5.4 | 36.2 | 95.0% |
 | 6 | Browser-Use +cache | GPT-6.1 Terra | 39.4 | 88.9% |
-| 7 | Browser-Use +cache | Gemini-2.5-Pro | 69.7 | 82.7% |
-| 8 | Browser-Use +cache | Gemini-2.5-Flash | 70.2 | 76.5% |
-| 9 | Browser-Use | Gemini-2.5-Flash | 96.5 | 55.6% |
-| 10 | Browser-Use +cache | GPT-4.1 | 104.4 | 85.2% |
-| 11 | JIT-Scheduler | Gemini-2.5-Pro | 109.9 | 86.4% |
-| 12 | JIT-Scheduler | Gemini-2.5-Flash | 118.4 | 60.5% |
-| 13 | Browser-Use | Gemini-2.5-Pro | 129.6 | 70.4% |
-| 14 | Vendor CUA | Claude Sonnet 4 | 141.7 | 79.0% |
-| 15 | JIT-Scheduler | GPT-4.1 | 142.6 | 77.8% |
-| 16 | Browser-Use | GPT-4.1 | 157.3 | 58.0% |
-| 17 | Vendor CUA | computer-use-preview | 258.7 | 77.8% |
+| 7 | Claude Code | Claude Sonnet 5.5 | 64.7 | 92.6% |
+| 8 | Browser-Use +cache | Gemini-2.5-Pro | 69.7 | 82.7% |
+| 9 | Browser-Use +cache | Gemini-2.5-Flash | 70.2 | 76.5% |
+| 10 | Browser-Use | Gemini-2.5-Flash | 96.5 | 55.6% |
+| 11 | Browser-Use +cache | GPT-4.1 | 104.4 | 85.2% |
+| 12 | JIT-Scheduler | Gemini-2.5-Pro | 109.9 | 86.4% |
+| 13 | JIT-Scheduler | Gemini-2.5-Flash | 118.4 | 60.5% |
+| 14 | Browser-Use | Gemini-2.5-Pro | 129.6 | 70.4% |
+| 15 | Vendor CUA | Claude Sonnet 4 | 141.7 | 79.0% |
+| 16 | JIT-Scheduler | GPT-4.1 | 142.6 | 77.8% |
+| 17 | Browser-Use | GPT-4.1 | 157.3 | 58.0% |
+| 18 | Vendor CUA | computer-use-preview | 258.7 | 77.8% |
 
 ## Harnesses
 
@@ -29,6 +30,7 @@ We evaluate each (harness, model) pair on 27 REAL tasks (Dashdish, Gomail, Omniz
 | JIT-Planner | Synthesized | Compiled | Serial |
 | CUA +cache | Synthesized | Per-step | Serial |
 | Browser-Use +cache | Synthesized | Per-step | Serial |
+| Claude Code | Primitives | Per-step | Serial |
 | Browser-Use | Primitives | Per-step | Serial |
 | JIT-Scheduler | Primitives | Per-step | Adaptive |
 | Vendor CUA | Pixels | Per-step | Serial |
